@@ -3,3 +3,4 @@ requests==2.6.2
 beautifulsoup4==4.3.2
 geocoder==1.8.2
 gunicorn==19.3.0
+python-dateutil==2.4.2
