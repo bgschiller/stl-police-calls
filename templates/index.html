@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Simple markers</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function infoContent(marker){
+        return (
+          '<div class="infoContent">' +
+            '<p>' + marker.reason + '</p>' +
+            '<p>' + marker.address + '</p>' +
+          '</div>'
+        );
+      }
+      var markers = {{ markers | tojson | safe }};
+      function initMap() {
+        var stlLatLong = {lat: 38.627222, lng: -90.197778};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: stlLatLong
+        });
+        var infoWindow = new google.maps.InfoWindow();
+
+        var mapMarkers = markers.map(function(m){
+          return new google.maps.Marker({
+            position: {lat: m.lat, lng: m.lng},
+            map: map,
+            title: m.reason
+          });
+        });
+
+        mapMarkers.map(function(m, ix){
+          google.maps.event.addListener(m, 'click',
+            (function(marker, data, infoWindow){
+              return function() {
+                infoWindow.setContent(infoContent(data));
+                infoWindow.open(map, marker);
+              };
+            })(m, markers[ix], infoWindow));
+        });
+
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB208d1oJw8aP7SKQeJ4Tg111iLJ7XVFqk&signed_in=true&callback=initMap">
+    </script>
+  </body>
+</html>
